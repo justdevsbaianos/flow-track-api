@@ -14,12 +14,30 @@ datasource db {
 }
 
 model user {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
+  id          Int         @id @default(autoincrement())
+  email       String      @unique
   password    String
   name        String
-  created     DateTime @default(now())
-  updated     DateTime @updatedAt
-  uuid        String   @unique @default(uuid())
+  created     DateTime    @default(now())
+  updated     DateTime    @updatedAt
+  uuid        String      @unique @default(uuid())
   preferences Json
+  schedules   schedules[]
+}
+
+model schedules {
+  id      Int      @id @default(autoincrement())
+  user_id Int
+  userId  user     @relation(fields: [user_id], references: [id])
+  time    DateTime @default(now())
+}
+
+model session {
+  id       Int      @id @default(autoincrement())
+  uuid     String   @default(uuid())
+  cookie   String
+  created  DateTime @default(now())
+  updated  DateTime @updatedAt
+  duration DateTime
+  valid    Boolean  @default(true)
 }
