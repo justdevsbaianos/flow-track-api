@@ -1,8 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { configSchema } from './config.schema';
 import { LoggerModule } from 'nestjs-pino';
 import { ErrorHelper } from './common/helpers/responses/responses-error.helper';
+import { SessionMiddleware } from './common/middlewares/session.middleware';
+import { UserModule } from './user/user.module';
+import { PrismaModule } from './common/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -26,8 +29,13 @@ import { ErrorHelper } from './common/helpers/responses/responses-error.helper';
         return config;
       },
     }),
+    UserModule, PrismaModule
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(customer: MiddlewareConsumer) {
+    customer.apply(SessionMiddleware).forRoutes('*');
+  }
+}
