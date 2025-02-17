@@ -37,7 +37,7 @@ model session {
   uuid     String   @default(uuid())
   cookie   String
   created  DateTime @default(now())
-  updated  DateTime @updatedAt
+  updated  DateTime? @updatedAt
   duration DateTime
   valid    Boolean  @default(true)
 }

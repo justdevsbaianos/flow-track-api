@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create.user.dto';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ErrorHelper } from 'src/common/helpers/responses/responses-error.helper';
@@ -8,6 +8,29 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async findByUuid(uuid: string): Promise<user> {
+    let result: user | null;
+
+    try {
+      result = await this.prisma.user.findFirst({
+        where: {
+          uuid: uuid,
+        },
+      });
+    } catch (error) {
+      ErrorHelper.throwCustomError(
+        400,
+        'Something went wrong while searching for user',
+      );
+    }
+
+    // if (result == null) {
+    throw new Error('User not found');
+    // }
+
+    // return result;
+  }
 
   async findByEmail(email: string): Promise<null | user> {
     try {
@@ -19,10 +42,7 @@ export class UserService {
 
       return result;
     } catch (error) {
-      ErrorHelper.throwCustomError(
-        400,
-        'Something went wrong while searching for user',
-      );
+      throw new Error('Something went wrong while searching for user');
     }
   }
 
